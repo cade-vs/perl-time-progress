@@ -168,7 +168,7 @@ Time::Progress - Elapsed and estimated finish time reporting.
   # autoflush to get \r working
   $| = 1;
   # get new `timer'
-  my $p = new Time::Progress;
+  my $p = Time::Progress->new;
 
   # restart and report progress
   $p->restart;
@@ -200,7 +200,7 @@ Shortest time interval that can be measured is 1 second. The available methods a
 
 =item new
 
-  my $p = new Time::Progress;
+  my $p = Time::Progress->new;
 
 Returns new object of Time::Progress class and starts the timer. It
 also sets min and max values to 0 and 100, so the next B<report> calls will
