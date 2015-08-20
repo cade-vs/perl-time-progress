@@ -2,7 +2,7 @@ package Time::Progress;
 use Exporter;
 our @ISA = qw( Exporter );
 our @EXPORT = qw(  );
-our $VERSION = '1.8';
+our $VERSION = '1.9';
 use strict;
 use warnings;
 use Carp;
