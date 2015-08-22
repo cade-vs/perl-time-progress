@@ -1,6 +1,7 @@
 Revision history for Perl module Time::Progress
 
 1.9 2015-08-??
+  - Added some basic tests that are checking correct behaviour.
   - Changed two uses of indirect method notation in the doc to use direct.
   - Reformatted this file as per CPAN::Changes::Spec
 
