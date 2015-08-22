@@ -6,6 +6,10 @@ Revision history for Perl module Time::Progress
   - Changed two uses of indirect method notation in the doc to use direct.
   - Moved demo.pl to examples/demo.pl
   - Dropped usage of Exporter, as the module doesn't export anything.
+  - Specified min perl version as 5.006 in code and dist metadata.
+  - Added prereqs to Makefile.PL
+  - Github repo now listed in the dist metadata.
+  - Added COPYRIGHT AND LICENSE section to doc
   - Reformatted this file as per CPAN::Changes::Spec
 
 1.8 2013-07-08 CADE

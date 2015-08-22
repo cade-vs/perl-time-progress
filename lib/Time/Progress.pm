@@ -1,9 +1,11 @@
 package Time::Progress;
-our $VERSION = '1.9';
+
+use 5.006;
 use strict;
 use warnings;
 use Carp;
 
+our $VERSION = '1.9';
 our %ATTRS =  (
               min => 1,
               max => 1,
@@ -389,16 +391,26 @@ all helpers need one argument -- current item.
 
 =head1 GITHUB REPOSITORY
 
-  git@github.com:cade-vs/perl-time-progress.git
-  
-  git clone git://github.com/cade-vs/perl-time-progress.git
-  
+L<https://github.com/cade-vs/perl-time-progress>
+
+
 =head1 AUTHOR
 
-  Vladi Belperchinov-Shabanski "Cade"
+Vladi Belperchinov-Shabanski "Cade"
 
-  <cade@biscom.net> <cade@datamax.bg> <cade@cpan.org>
+E<lt>cade@biscom.netE<gt> E<lt>cade@datamax.bgE<gt> E<lt>cade@cpan.orgE<gt>
 
-  http://cade.datamax.bg
+L<http://cade.datamax.bg>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2001 by Vladi Belperchinov-Shabanski
+E<lt>cade@cpan.orgE<gt>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
 
 =cut
