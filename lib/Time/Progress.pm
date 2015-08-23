@@ -164,50 +164,67 @@ Time::Progress - Elapsed and estimated finish time reporting.
 =head1 SYNOPSIS
 
   use Time::Progress;
-  # autoflush to get \r working
-  $| = 1;
-  # get new `timer'
-  my $p = Time::Progress->new;
 
-  # restart and report progress
-  $p->restart;
-  sleep 5; # or do some work here
-  print $p->report( "done %p elapsed: %L (%l sec), ETA %E (%e sec)\n", 50 );
+  my ($min, $max) = (0, 4);
+  my $p = Time::Progress->new(min => $min, max => $max);
 
-  # set min and max values
-  $p->attr( min => 2, max => 20 );
-  # restart `timer'
-  $p->restart;
-  my $c;
-  for( $c = 2; $c <= 20; $c++ )
-    {
-    # print progress bar and percentage done
-    print $p->report( "eta: %E min, %40b %p\r", $c );
-    sleep 1; # work...
-    }
-  # stop timer
-  $p->stop;
-
-  # report times
-  print $p->elapsed_str;
+  for (my $c = $min; $c <= $max; $c++) {
+    print STDERR $p->report("\r%20b  ETA: %E", $c);
+    # do some work
+  }
+  print STDERR "\n";
 
 =head1 DESCRIPTION
 
-Shortest time interval that can be measured is 1 second. The available methods are:
+This module displays progress information for long-running processes.
+This can be percentage complete, time elapsed, estimated time remaining,
+an ASCII progress bar, or any combination of those.
+
+It is useful for code where you perform a number of steps,
+or iterations of a loop,
+where the number of iterations is known before you start the loop.
+
+The typical usage of this module is:
 
 =over 4
 
-=item new
+=item *
+Create an instance of C<Time::Progress>, specifying min and max count values.
+
+=item *
+At the head of the loop, you call the C<report()> method with
+a format specifier and the iteration count,
+and get back a string that should be displayed.
+
+=back
+
+If you include a carriage return character (\r) in the format string,
+then the message will be over-written at each step.
+Putting \r at the start of the format string,
+as in the SYNOPSIS,
+results in the cursor sitting at the end of the message.
+
+If you display to STDOUT, then remember to enable auto-flushing:
+
+ use IO::Handle;
+ STDOUT->autoflush(1);
+
+The shortest time interval that can be measured is 1 second.
+
+=head1 METHODS
+
+=head2 new
 
   my $p = Time::Progress->new;
 
-Returns new object of Time::Progress class and starts the timer. It
-also sets min and max values to 0 and 100, so the next B<report> calls will
-default to percents range.
+Returns new object of Time::Progress class and starts the timer.
+It also sets min and max values to 0 and 100,
+so the next B<report> calls will default to percents range.
 
-=item restart
+=head2 restart
 
-restarts the timer and clears the stop mark. optionally restart() may act also
+Restarts the timer and clears the stop mark.
+Optionally restart() may act also
 as attr() for setting attributes:
 
   $p->restart( min => 1, max => 5 );
@@ -222,7 +239,7 @@ already set to 0 when object is constructed by new():
 
   $p->restart( max => 42 );
 
-=item stop
+=head2 stop
 
 Sets the stop mark. This is only useful if you do some work, then finish,
 then do some work that shouldn't be timed and finally report. Something
@@ -241,11 +258,11 @@ Stop is useless if you want to report time as soon as work is finished like:
   # do some work here...
   print $p->report;
 
-=item continue
+=head2 continue
 
 Clears the stop mark. (mostly useless, perhaps you need to B<restart>?)
 
-=item attr
+=head2 attr
 
 Sets and returns internal values for attributes. Available attributes are:
 
@@ -280,11 +297,11 @@ This way of handling attributes is a bit heavy but saves a lot
 of attribute handling functions. B<attr> will complain if you pass odd number
 of parameters.
 
-=item report
+=head2 report
 
-B<report> is the most complex method in this package. :)
+This is the most complex method in this package :)
 
-expected arguments are:
+The expected arguments are:
 
   $p->report( format, [current_item] );
 
@@ -353,41 +370,48 @@ then all estimate sequences will have value `n/a'.
 
 You can freely mix reports during the same event.
 
-=item elapsed
 
-=item estimate
+=head2 elapsed($item)
 
-helpers -- return elapsed/estimate seconds.
+Returns the time elapsed, in seconds.
+This help function, and those described below,
+take one argument: the current item number.
 
-=item elapsed_str
 
-=item estimate_str
+=head2 estimate($item)
 
-helpers -- return elapsed/estimated string in format:
+Returns an estimate of the time remaining, in seconds.
+
+
+=head2 elapsed_str($item)
+
+Returns elapsed time as a formatted string:
 
   "elapsed time is MM:SS min.\n"
+
+=head2 estimate_str($item)
+
+Returns estimated remaining time, as a formatted string:
+
   "remaining time is MM:SS min.\n"
 
-all helpers need one argument -- current item.
-
-=back
 
 =head1 FORMAT EXAMPLES
 
-  # $c is current element (step) reached
-  # for the examples: min = 0, max = 100, $c = 33.3
+ # $c is current element (step) reached
+ # for the examples: min = 0, max = 100, $c = 33.3
 
-  print $p->report( "done %p elapsed: %L (%l sec), ETA %E (%e sec)\n", $c );
-  # prints:
-  # done  33.3% elapsed time   0:05 (5 sec), ETA   0:07 (7 sec)
+ print $p->report( "done %p elapsed: %L (%l sec), ETA %E (%e sec)\n", $c );
+ # prints:
+ # done  33.3% elapsed time   0:05 (5 sec), ETA   0:07 (7 sec)
 
-  print $p->report( "%45b %p\r", $c );
-  # prints:
-  # ###############..............................  33.3%
+ print $p->report( "%45b %p\r", $c );
+ # prints:
+ # ###############..............................  33.3%
 
-  print $p->report( "done %p ETA %f\n", $c );
-  # prints:
-  # done  33.3% ETA Sun Oct 21 16:50:57 2001
+ print $p->report( "done %p ETA %f\n", $c );
+ # prints:
+ # done  33.3% ETA Sun Oct 21 16:50:57 2001
 
 
 =head1 SEE ALSO
