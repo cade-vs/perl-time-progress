@@ -3,6 +3,7 @@ Revision history for Perl module Time::Progress
 1.91 2015-08-23 CADE
   - Removed redundant =cut at the end of the file, which was resulting
     in a pod warning.
+  - Added a SEE ALSO section to the pod.
 
 1.9 2015-08-23 CADE (changes from NEILB)
   - Added some basic tests that are checking correct behaviour.

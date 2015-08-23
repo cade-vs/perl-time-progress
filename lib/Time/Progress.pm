@@ -389,6 +389,59 @@ all helpers need one argument -- current item.
   # prints:
   # done  33.3% ETA Sun Oct 21 16:50:57 2001
 
+
+=head1 SEE ALSO
+
+The first thing you need to know about L<Smart::Comments> is that
+it was written by Damian Conway, so you should expect to be a little
+bit freaked out by it. It looks for certain format comments in your
+code, and uses them to display progress messages. Includes support
+for progress meters.
+
+L<Progress::Any> separates the calculation of stats from the display
+of those stats, so you can have different back-ends which display
+progress is different ways. There are a number of separate back-ends
+on CPAN.
+
+L<Term::ProgressBar> displays a progress meter to a standard terminal.
+
+L<Term::ProgressBar::Quiet> uses C<Term::ProgressBar> if your code
+is running in a terminal. If not running interactively, then no progress bar
+is shown.
+
+L<Term::ProgressBar::Simple> provides a simple interface where you
+get a C<$progress> object that you can just increment in a long-running loop.
+It builds on C<Term::ProgressBar::Quiet>, so displays nothing
+when not running interactively.
+
+L<Term::Activity> displays a progress meter with timing information,
+and two different skins.
+
+L<Text::ProgressBar> is another customisable progress meter,
+which comes with a number of 'widgets' for display progress
+information in different ways.
+
+L<ProgressBar::Stack> handles the case where a long-running process
+has a number of sub-processes, and you want to record progress
+of those too.
+
+L<String::ProgressBar> provides a simple progress bar,
+which shows progress using a bar of ASCII characters,
+and the percentage complete.
+
+L<Term::Spinner> is simpler than most of the other modules listed here,
+as it just displays a 'spinner' to the terminal. This is useful if you
+just want to show that something is happening, but can't predict how many
+more operations will be required.
+
+L<Term::Pulse> shows a pulsed progress bar in your terminal,
+using a child process to pulse the progress bar until your job is complete.
+
+L<Term::YAP> a fork of C<Term::Pulse>.
+
+L<Term::StatusBar> is another progress bar module, but it hasn't
+seen a release in the last 12 years.
+
 =head1 GITHUB REPOSITORY
 
 L<https://github.com/cade-vs/perl-time-progress>
