@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '1.9';
+our $VERSION = '1.10';
 our %ATTRS =  (
               min => 1,
               max => 1,
@@ -481,7 +481,7 @@ L<http://cade.datamax.bg>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2001 by Vladi Belperchinov-Shabanski
+This software is copyright (c) 2001-2015 by Vladi Belperchinov-Shabanski
 E<lt>cade@cpan.orgE<gt>.
 
 This is free software; you can redistribute it and/or modify it under
