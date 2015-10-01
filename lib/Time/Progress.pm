@@ -5,17 +5,19 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '1.10';
+our $VERSION = '1.11';
+our $SMOOTHING_DELTA = '0.1';
 our %ATTRS =  (
               min => 1,
               max => 1,
               format => 1,
+              smoothing => 1,
               );
 
 sub new
 {
   my $class = shift;
-  my $self = { min => 0, max => 100 };
+  my $self = { min => 0, max => 100, smoothing => 0 };
   bless $self;
   $self->attr( @_ );
   $self->restart();
@@ -75,8 +77,9 @@ sub report
   my $l = $now - $start;
   my $L = sprintf "%3d:%02d", int( $l / 60 ), ( $l % 60 );
 
-  my $min = $self->{ 'min' };
-  my $max = $self->{ 'max' };
+  my $min    = $self->{ 'min' };
+  my $max    = $self->{ 'max' };
+  my $last_e = $self->{ 'last_e' };
   $cur = $min unless defined $cur;
 
   my $b  = 'n/a';
@@ -103,7 +106,12 @@ sub report
       {
       $e = $l * ( $max - $min ) / ( $cur - $min );
       $e = int( $e - $l );
+      if ($self->{smoothing} && defined($last_e) && $last_e < $e && (($e - $last_e) / $last_e) < $SMOOTHING_DELTA)
+        {
+        $e = $last_e;
+        }
       $e = 0 if $e < 0;
+      $self->{last_e} = $e if $self->{smoothing};
       }
     $E = sprintf "%3d:%02d", int( $e / 60 ), ( $e % 60 );
 
@@ -215,11 +223,33 @@ The shortest time interval that can be measured is 1 second.
 
 =head2 new
 
-  my $p = Time::Progress->new;
+  my $p = Time::Progress->new(%options);
 
 Returns new object of Time::Progress class and starts the timer.
 It also sets min and max values to 0 and 100,
 so the next B<report> calls will default to percents range.
+
+You can configure the instance with the following parameters:
+
+=over 4
+
+=item min
+
+Sets the B<min> attribute, as described in the C<attr> section below.
+
+=item max
+
+Sets the B<max> attribute, as described in the C<attr> section below.
+
+=item smoothing
+
+If set to a true value, then the estimated time remaining is smoothed
+in a simplistic way: if the time remaining ever goes up, by less than
+10% of the previous estimate, then we just stick with the previous
+estimate. This prevents flickering estimates.
+By default this feature is turned off.
+
+=back
 
 =head2 restart
 
@@ -394,6 +424,7 @@ Returns elapsed time as a formatted string:
 Returns estimated remaining time, as a formatted string:
 
   "remaining time is MM:SS min.\n"
+
 
 
 =head1 FORMAT EXAMPLES
