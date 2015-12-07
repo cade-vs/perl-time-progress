@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '1.10';
+our $VERSION = '2.0';
 our %ATTRS =  (
               min => 1,
               max => 1,
