@@ -1,5 +1,8 @@
 Revision history for Perl module Time::Progress
 
+2.11 2015-12-08 CADE
+  - fixed smoothing delta range and default parameter.
+
 2.10 2015-12-08 NEILB CADE
   - Added 'smoothing' option which makes the estimated time remaining
     monotically decreasing most of the time, preventing flicker.

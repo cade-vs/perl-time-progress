@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '2.10';
+our $VERSION = '2.11';
 
 our $SMOOTHING_DELTA_DEFAULT = '0.1';
 our %ATTRS =  (
@@ -19,7 +19,7 @@ our %ATTRS =  (
 sub new
 {
   my $class = shift;
-  my $self = { min => 0, max => 100, smoothing => 0 };
+  my $self = { min => 0, max => 100, smoothing => 0, smoothing_delta => $SMOOTHING_DELTA_DEFAULT };
   bless $self;
   $self->attr( @_ );
   $self->restart();
@@ -82,8 +82,10 @@ sub report
   my $min    = $self->{ 'min' };
   my $max    = $self->{ 'max' };
   my $last_e = $self->{ 'last_e' };
-  my $sdelta = $self->{ 'smoothing_delta' } > 0 ? $self->{ 'smoothing_delta' } : $SMOOTHING_DELTA_DEFAULT;
+  my $sdelta = $self->{ 'smoothing_delta' };
+  
   $cur = $min unless defined $cur;
+  $sdelta = $SMOOTHING_DELTA_DEFAULT unless $sdelta > 0 and $sdelta < 1;
 
   my $b  = 'n/a';
   my $bl = 79;
