@@ -1,9 +1,14 @@
 Revision history for Perl module Time::Progress
 
-2.0 2015-09-01 CADE
-  - version bump (without comment on CPAN version number interpretation)
+2.10 2015-12-08 NEILB CADE
+  - Added 'smoothing' option which makes the estimated time remaining
+    monotically decreasing most of the time, preventing flicker.
+  - Added option to change default smoothing delta parameter.  
 
-1.10 2015-08-23 CADE (changes from NEILB)
+2.00 2015-09-01 CADE
+  - version bump (CPAN release cleanup)
+
+1.91 2015-08-23 CADE (changes from NEILB)
   - Removed redundant =cut at the end of the file, which was resulting
     in a pod warning.
   - Added a SEE ALSO section to the pod.
