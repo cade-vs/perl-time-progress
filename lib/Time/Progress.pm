@@ -111,7 +111,7 @@ sub report
       {
       $e = $l * ( $max - $min ) / ( $cur - $min );
       $e = int( $e - $l );
-      if ( $self->{ 'smoothing' } && defined( $last_e ) && $last_e < $e && ( ( $e - $last_e ) / $last_e ) < $sdelta )
+      if ( $self->{ 'smoothing' } && $last_e && $last_e < $e && ( ( $e - $last_e ) / $last_e ) < $sdelta )
         {
         $e = $last_e;
         }
