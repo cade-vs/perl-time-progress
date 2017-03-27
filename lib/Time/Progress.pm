@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '2.11';
+our $VERSION = '2.12';
 
 our $SMOOTHING_DELTA_DEFAULT = '0.1';
 our %ATTRS =  (
