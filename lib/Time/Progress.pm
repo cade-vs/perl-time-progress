@@ -1,3 +1,11 @@
+##############################################################################
+#
+#  Time::Progress
+#  2013-2019 (c) Vladi Belperchinov-Shabanski "Cade" <cade@bis.bg>
+#
+#  DISTRIBUTED UNDER GPLv2
+#
+##############################################################################
 package Time::Progress;
 
 use 5.006;
@@ -509,21 +517,23 @@ seen a release in the last 12 years.
 
 =head1 GITHUB REPOSITORY
 
-L<https://github.com/cade-vs/perl-time-progress>
+
+  https://github.com/cade-vs/perl-time-progress
+  
+  git clone https://github.com/cade-vs/perl-time-progress
 
 
 =head1 AUTHOR
 
-Vladi Belperchinov-Shabanski "Cade"
+  Vladi Belperchinov-Shabanski "Cade"
 
-E<lt>cade@biscom.netE<gt> E<lt>cade@datamax.bgE<gt> E<lt>cade@cpan.orgE<gt>
+  <cade@bis.bg> <cade@cpan.org>
 
-L<http://cade.datamax.bg>
+  http://cade.datamax.bg
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2001-2015 by Vladi Belperchinov-Shabanski
-E<lt>cade@cpan.orgE<gt>.
+This software is (c) 2001-2019 by Vladi Belperchinov-Shabanski E<lt>cade@bis.bgE<gt> E<lt>cade@cpan.orgE<gt>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
