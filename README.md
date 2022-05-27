@@ -163,7 +163,7 @@ special sequences are:
         %9b  --  9-chars wide bar
         %b   -- 79-chars wide bar (default)
 
-Parameters can be ommited and then default format set with __attr__ will
+Parameters can be omitted and then default format set with __attr__ will
 be used.
 
 Sequences 'L', 'l', 'E' and 'e' can have width also:
