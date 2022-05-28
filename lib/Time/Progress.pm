@@ -398,7 +398,7 @@ progress bar which looks like:
 
 =back
 
-Parameters can be ommited and then default format set with B<attr> will
+Parameters can be omitted and then default format set with B<attr> will
 be used.
 
 Sequences 'L', 'l', 'E' and 'e' can have width also:
