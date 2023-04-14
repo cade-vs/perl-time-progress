@@ -5,48 +5,83 @@ Time::Progress - Elapsed and estimated finish time reporting.
 # SYNOPSIS
 
     use Time::Progress;
-    # autoflush to get \r working
-    $| = 1;
-    # get new `timer'
-    my $p = Time::Progress->new;
 
-    # restart and report progress
-    $p->restart;
-    sleep 5; # or do some work here
-    print $p->report( "done %p elapsed: %L (%l sec), ETA %E (%e sec)\n", 50 );
+    my ($min, $max) = (0, 4);
+    my $p = Time::Progress->new(min => $min, max => $max);
 
-    # set min and max values
-    $p->attr( min => 2, max => 20 );
-    # restart `timer'
-    $p->restart;
-    my $c;
-    for( $c = 2; $c <= 20; $c++ )
-      {
-      # print progress bar and percentage done
-      print $p->report( "eta: %E min, %40b %p\r", $c );
-      sleep 1; # work...
-      }
-    # stop timer
-    $p->stop;
-
-    # report times
-    print $p->elapsed_str;
+    for (my $c = $min; $c <= $max; $c++) {
+      print STDERR $p->report("\r%20b  ETA: %E", $c);
+      # do some work
+    }
+    print STDERR "\n";
 
 # DESCRIPTION
 
-Shortest time interval that can be measured is 1 second. The available methods are:
+This module displays progress information for long-running processes.
+This can be percentage complete, time elapsed, estimated time remaining,
+an ASCII progress bar, or any combination of those.
 
-- new
+It is useful for code where you perform a number of steps,
+or iterations of a loop,
+where the number of iterations is known before you start the loop.
 
-    my $p = Time::Progress->new;
+The typical usage of this module is:
 
-Returns new object of Time::Progress class and starts the timer. It
-also sets min and max values to 0 and 100, so the next __report__ calls will
-default to percents range.
+- Create an instance of `Time::Progress`, specifying min and max count values.
+- At the head of the loop, you call the `report()` method with
+a format specifier and the iteration count,
+and get back a string that should be displayed.
 
-- restart
+If you include a carriage return character (\\r) in the format string,
+then the message will be over-written at each step.
+Putting \\r at the start of the format string,
+as in the SYNOPSIS,
+results in the cursor sitting at the end of the message.
 
-restarts the timer and clears the stop mark. optionally restart() may act also
+If you display to STDOUT, then remember to enable auto-flushing:
+
+    use IO::Handle;
+    STDOUT->autoflush(1);
+
+The shortest time interval that can be measured is 1 second.
+
+# METHODS
+
+## new
+
+    my $p = Time::Progress->new(%options);
+
+Returns new object of Time::Progress class and starts the timer.
+It also sets min and max values to 0 and 100,
+so the next **report** calls will default to percents range.
+
+You can configure the instance with the following parameters:
+
+- min
+
+    Sets the **min** attribute, as described in the `attr` section below.
+
+- max
+
+    Sets the **max** attribute, as described in the `attr` section below.
+
+- smoothing
+
+    If set to a true value, then the estimated time remaining is smoothed
+    in a simplistic way: if the time remaining ever goes up, by less than
+    10% of the previous estimate, then we just stick with the previous
+    estimate. This prevents flickering estimates.
+    By default this feature is turned off.
+
+- smoothing\_delta
+
+    Sets smoothing delta parameter. Default value is 0.1 (i.e. 10%).
+    See 'smoothing' parameter for more details. 
+
+## restart
+
+Restarts the timer and clears the stop mark.
+Optionally restart() may act also
 as attr() for setting attributes:
 
     $p->restart( min => 1, max => 5 );
@@ -61,7 +96,7 @@ already set to 0 when object is constructed by new():
 
     $p->restart( max => 42 );
 
-- stop
+## stop
 
 Sets the stop mark. This is only useful if you do some work, then finish,
 then do some work that shouldn't be timed and finally report. Something
@@ -80,30 +115,30 @@ Stop is useless if you want to report time as soon as work is finished like:
     # do some work here...
     print $p->report;
 
-- continue
+## continue
 
-Clears the stop mark. (mostly useless, perhaps you need to __restart__?)
+Clears the stop mark. (mostly useless, perhaps you need to **restart**?)
 
-- attr
+## attr
 
 Sets and returns internal values for attributes. Available attributes are:
 
-    - min
+- min
 
     This is the min value of the items that will follow (used to calculate
     estimated finish time)
 
-    - max
+- max
 
     This is the max value of all items in the even (also used to calculate
     estimated finish time)
 
-    - format
+- format
 
-    This is the default __report__ format. It is used if __report__ is called
+    This is the default **report** format. It is used if **report** is called
     without parameters.
 
-__attr__ returns array of the set attributes:
+**attr** returns array of the set attributes:
 
     my ( $new_min, $new_max ) = $p->attr( min => 1, max => 5 );
 
@@ -112,46 +147,46 @@ If you want just to get values use undef:
     my $old_format = $p->attr( format => undef );
 
 This way of handling attributes is a bit heavy but saves a lot
-of attribute handling functions. __attr__ will complain if you pass odd number
+of attribute handling functions. **attr** will complain if you pass odd number
 of parameters.
 
-- report
+## report
 
-__report__ is the most complex method in this package. :)
+This is the most complex method in this package :)
 
-expected arguments are:
+The expected arguments are:
 
     $p->report( format, [current_item] );
 
 _format_ is string that will be used for the result string. Recognized
 special sequences are:
 
-    - %l
+- %l
 
     elapsed seconds
 
-    - %L
+- %L
 
     elapsed time in minutes in format MM:SS
 
-    - %e
+- %e
 
     remaining seconds
 
-    - %E
+- %E
 
     remaining time in minutes in format MM:SS
 
-    - %p
+- %p
 
     percentage done in format PPP.P%
 
-    - %f
+- %f
 
-    estimated finish time in format returned by __localtime()__
+    estimated finish time in format returned by **localtime()**
 
-        - %b
-    - %B
+- %b
+- %B
 
     progress bar which looks like:
 
@@ -163,7 +198,15 @@ special sequences are:
         %9b  --  9-chars wide bar
         %b   -- 79-chars wide bar (default)
 
-Parameters can be omitted and then default format set with __attr__ will
+- %s
+
+    current speed in items per second
+
+- %S
+
+    current min/max speeds (calculated after first 1% of the progress)
+
+Parameters can be omitted and then default format set with **attr** will
 be used.
 
 Sequences 'L', 'l', 'E' and 'e' can have width also:
@@ -173,7 +216,7 @@ Sequences 'L', 'l', 'E' and 'e' can have width also:
     ...
 
 Estimate time calculations can be used only if min and max values are set
-(see __attr__ method) and current item is passed to __report__! if you want
+(see **attr** method) and current item is passed to **report**! if you want
 to use the default format but still have estimates use it like this:
 
     $p->format( undef, 45 );
@@ -183,20 +226,27 @@ then all estimate sequences will have value \`n/a'.
 
 You can freely mix reports during the same event.
 
-- elapsed
-- estimate
+## elapsed($item)
 
-helpers -- return elapsed/estimate seconds.
+Returns the time elapsed, in seconds.
+This help function, and those described below,
+take one argument: the current item number.
 
-- elapsed\_str
-- estimate\_str
+## estimate($item)
 
-helpers -- return elapsed/estimated string in format:
+Returns an estimate of the time remaining, in seconds.
+
+## elapsed\_str($item)
+
+Returns elapsed time as a formatted string:
 
     "elapsed time is MM:SS min.\n"
-    "remaining time is MM:SS min.\n"
 
-all helpers need one argument -- current item.
+## estimate\_str($item)
+
+Returns estimated remaining time, as a formatted string:
+
+    "remaining time is MM:SS min.\n"
 
 # FORMAT EXAMPLES
 
@@ -215,24 +265,78 @@ all helpers need one argument -- current item.
     # prints:
     # done  33.3% ETA Sun Oct 21 16:50:57 2001
 
+    print $p->report( "%30b %p %s/sec (%S) %L ETA: %E" );
+    # ..............................   0.7% 924/sec (938/951)   1:13 ETA: 173:35
+
+# SEE ALSO
+
+The first thing you need to know about [Smart::Comments](https://metacpan.org/pod/Smart%3A%3AComments) is that
+it was written by Damian Conway, so you should expect to be a little
+bit freaked out by it. It looks for certain format comments in your
+code, and uses them to display progress messages. Includes support
+for progress meters.
+
+[Progress::Any](https://metacpan.org/pod/Progress%3A%3AAny) separates the calculation of stats from the display
+of those stats, so you can have different back-ends which display
+progress is different ways. There are a number of separate back-ends
+on CPAN.
+
+[Term::ProgressBar](https://metacpan.org/pod/Term%3A%3AProgressBar) displays a progress meter to a standard terminal.
+
+[Term::ProgressBar::Quiet](https://metacpan.org/pod/Term%3A%3AProgressBar%3A%3AQuiet) uses `Term::ProgressBar` if your code
+is running in a terminal. If not running interactively, then no progress bar
+is shown.
+
+[Term::ProgressBar::Simple](https://metacpan.org/pod/Term%3A%3AProgressBar%3A%3ASimple) provides a simple interface where you
+get a `$progress` object that you can just increment in a long-running loop.
+It builds on `Term::ProgressBar::Quiet`, so displays nothing
+when not running interactively.
+
+[Term::Activity](https://metacpan.org/pod/Term%3A%3AActivity) displays a progress meter with timing information,
+and two different skins.
+
+[Text::ProgressBar](https://metacpan.org/pod/Text%3A%3AProgressBar) is another customisable progress meter,
+which comes with a number of 'widgets' for display progress
+information in different ways.
+
+[ProgressBar::Stack](https://metacpan.org/pod/ProgressBar%3A%3AStack) handles the case where a long-running process
+has a number of sub-processes, and you want to record progress
+of those too.
+
+[String::ProgressBar](https://metacpan.org/pod/String%3A%3AProgressBar) provides a simple progress bar,
+which shows progress using a bar of ASCII characters,
+and the percentage complete.
+
+[Term::Spinner](https://metacpan.org/pod/Term%3A%3ASpinner) is simpler than most of the other modules listed here,
+as it just displays a 'spinner' to the terminal. This is useful if you
+just want to show that something is happening, but can't predict how many
+more operations will be required.
+
+[Term::Pulse](https://metacpan.org/pod/Term%3A%3APulse) shows a pulsed progress bar in your terminal,
+using a child process to pulse the progress bar until your job is complete.
+
+[Term::YAP](https://metacpan.org/pod/Term%3A%3AYAP) a fork of `Term::Pulse`.
+
+[Term::StatusBar](https://metacpan.org/pod/Term%3A%3AStatusBar) is another progress bar module, but it hasn't
+seen a release in the last 12 years.
+
 # GITHUB REPOSITORY
 
-[https://github.com/cade-vs/perl-time-progress](https://github.com/cade-vs/perl-time-progress)
-
-
+    https://github.com/cade-vs/perl-time-progress
+    
+    git clone https://github.com/cade-vs/perl-time-progress
 
 # AUTHOR
 
-Vladi Belperchinov-Shabanski "Cade"
+    Vladi Belperchinov-Shabanski "Cade"
 
-<cade@biscom.net> <cade@datamax.bg> <cade@cpan.org>
+    <cade@bis.bg> <cade@cpan.org>
 
-[http://cade.datamax.bg](http://cade.datamax.bg)
+    http://cade.datamax.bg
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2001 by Vladi Belperchinov-Shabanski
-<cade@cpan.org>.
+This software is (c) 2001-2019 by Vladi Belperchinov-Shabanski <cade@bis.bg> <cade@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
